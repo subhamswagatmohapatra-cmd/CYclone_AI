@@ -1,0 +1,90 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default-deny all by default
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidShelterCheckin(data) {
+      return data.keys().hasAll(['shelterId', 'evacueeName', 'familyMembersCount', 'userId'])
+        && data.keys().hasOnly(['id', 'shelterId', 'shelterName', 'evacueeName', 'contactPhone', 'familyMembersCount', 'specialNeeds', 'checkedInAt', 'createdAt', 'userId'])
+        && data.shelterId is string && data.shelterId.size() <= 64
+        && data.evacueeName is string && data.evacueeName.size() > 0 && data.evacueeName.size() <= 128
+        && data.familyMembersCount is number && data.familyMembersCount >= 1 && data.familyMembersCount <= 50
+        && data.userId is string && data.userId.size() <= 128;
+    }
+
+    function isValidEmergencyContact(data) {
+      return data.keys().hasAll(['name', 'number', 'category', 'userId'])
+        && data.keys().hasOnly(['id', 'name', 'category', 'number', 'alternateNumber', 'description', 'available24x7', 'priority', 'isCustom', 'relationship', 'location', 'district', 'assignedShelter', 'safetyStatus', 'statusUpdatedAt', 'createdAt', 'userId'])
+        && data.name is string && data.name.size() > 0 && data.name.size() <= 128
+        && data.number is string && data.number.size() > 0 && data.number.size() <= 32
+        && data.category is string && data.category.size() <= 64
+        && data.userId is string && data.userId.size() <= 128;
+    }
+
+    function isValidUserProfile(data) {
+      return data.keys().hasAll(['uid', 'email'])
+        && data.keys().hasOnly(['uid', 'displayName', 'email', 'photoURL', 'createdAt'])
+        && data.uid is string && data.uid.size() <= 128
+        && data.email is string && data.email.size() <= 128;
+    }
+
+    function isValidEmergencyReport(data) {
+      return data.keys().hasAll(['district', 'message', 'severity', 'userId'])
+        && data.keys().hasOnly(['id', 'district', 'category', 'message', 'severity', 'createdAt', 'userId'])
+        && data.district is string && data.district.size() <= 64
+        && data.message is string && data.message.size() > 0 && data.message.size() <= 512
+        && data.severity is string && data.severity.size() <= 32
+        && data.userId is string && data.userId.size() <= 128;
+    }
+
+    // Shelter check-ins: public read, authenticated user can manage own record
+    match /shelter_checkins/{checkinId} {
+      allow read: if true;
+      allow create: if isSignedIn() && isValidId(checkinId) && isValidShelterCheckin(incoming()) && incoming().userId == request.auth.uid;
+      allow update: if isSignedIn() && isValidId(checkinId) && isValidShelterCheckin(incoming()) && existing().userId == request.auth.uid && incoming().userId == request.auth.uid;
+      allow delete: if isSignedIn() && isValidId(checkinId) && existing().userId == request.auth.uid;
+    }
+
+    // Custom emergency contacts directory
+    match /emergency_contacts/{contactId} {
+      allow read: if true;
+      allow create: if isSignedIn() && isValidId(contactId) && isValidEmergencyContact(incoming()) && incoming().userId == request.auth.uid;
+      allow update: if isSignedIn() && isValidId(contactId) && isValidEmergencyContact(incoming()) && existing().userId == request.auth.uid && incoming().userId == request.auth.uid;
+      allow delete: if isSignedIn() && isValidId(contactId) && existing().userId == request.auth.uid;
+    }
+
+    // User profiles & personal offline emergency kits
+    match /user_profiles/{userId} {
+      allow read: if isSignedIn() && request.auth.uid == userId;
+      allow create, update: if isSignedIn() && request.auth.uid == userId && isValidId(userId) && isValidUserProfile(incoming()) && incoming().uid == request.auth.uid;
+      allow delete: if isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Community emergency reports
+    match /emergency_reports/{reportId} {
+      allow read: if true;
+      allow create: if isSignedIn() && isValidId(reportId) && isValidEmergencyReport(incoming()) && incoming().userId == request.auth.uid;
+      allow update, delete: if isSignedIn() && isValidId(reportId) && existing().userId == request.auth.uid;
+    }
+  }
+}

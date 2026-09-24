@@ -1,0 +1,93 @@
+{
+  "entities": {
+    "ShelterCheckin": {
+      "title": "Shelter Checkin",
+      "description": "Registration of evacuee or family unit at a designated coastal cyclone shelter",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "shelterId": { "type": "string", "maxLength": 64 },
+        "shelterName": { "type": "string", "maxLength": 128 },
+        "evacueeName": { "type": "string", "maxLength": 128 },
+        "contactPhone": { "type": "string", "maxLength": 32 },
+        "familyMembersCount": { "type": "number" },
+        "specialNeeds": { "type": "string", "maxLength": 256 },
+        "checkedInAt": { "type": "string", "maxLength": 64 },
+        "createdAt": { "type": "string", "maxLength": 64 },
+        "userId": { "type": "string", "maxLength": 128 }
+      },
+      "required": ["shelterId", "evacueeName", "familyMembersCount", "userId"]
+    },
+    "EmergencyContact": {
+      "title": "Emergency Contact",
+      "description": "Emergency responder, local volunteer, or relief helpline contact details",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 128 },
+        "category": { "type": "string", "maxLength": 64 },
+        "number": { "type": "string", "maxLength": 32 },
+        "alternateNumber": { "type": "string", "maxLength": 32 },
+        "description": { "type": "string", "maxLength": 256 },
+        "available24x7": { "type": "boolean" },
+        "priority": { "type": "string", "maxLength": 32 },
+        "isCustom": { "type": "boolean" },
+        "relationship": { "type": "string", "maxLength": 64 },
+        "location": { "type": "string", "maxLength": 128 },
+        "district": { "type": "string", "maxLength": 64 },
+        "assignedShelter": { "type": "string", "maxLength": 128 },
+        "safetyStatus": { "type": "string", "maxLength": 32 },
+        "statusUpdatedAt": { "type": "string", "maxLength": 64 },
+        "createdAt": { "type": "string", "maxLength": 64 },
+        "userId": { "type": "string", "maxLength": 128 }
+      },
+      "required": ["name", "number", "category", "userId"]
+    },
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "Authenticated user profile and offline preferences",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "displayName": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 128 },
+        "photoURL": { "type": "string", "maxLength": 512 },
+        "createdAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["uid", "email"]
+    },
+    "EmergencyReport": {
+      "title": "Emergency Report",
+      "description": "Field incident or urgent SOS relief request filed during cyclone landfall",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "district": { "type": "string", "maxLength": 64 },
+        "category": { "type": "string", "maxLength": 64 },
+        "message": { "type": "string", "maxLength": 512 },
+        "severity": { "type": "string", "maxLength": 32 },
+        "createdAt": { "type": "string", "maxLength": 64 },
+        "userId": { "type": "string", "maxLength": 128 }
+      },
+      "required": ["district", "message", "severity", "userId"]
+    }
+  },
+  "firestore": {
+    "/shelter_checkins/{checkinId}": {
+      "schema": { "$ref": "#/entities/ShelterCheckin" },
+      "description": "Evacuee registration records across multipurpose coastal shelters"
+    },
+    "/emergency_contacts/{contactId}": {
+      "schema": { "$ref": "#/entities/EmergencyContact" },
+      "description": "Emergency phone directory and custom relief helplines"
+    },
+    "/user_profiles/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Authenticated user account details and emergency kit preferences"
+    },
+    "/emergency_reports/{reportId}": {
+      "schema": { "$ref": "#/entities/EmergencyReport" },
+      "description": "Field disaster SOS reports and critical damage incidents"
+    }
+  }
+}

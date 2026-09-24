@@ -1,0 +1,39 @@
+========================================================================
+   CYCLONE-AI DISASTER GIS & EMERGENCY MANAGEMENT PLATFORM
+   Smart India Hackathon 2026 Breakthrough Project
+========================================================================
+
+HOW TO OPEN & RUN ON YOUR LAPTOP:
+
+PREREQUISITE:
+- Install Node.js (version 18 or newer) from: https://nodejs.org/
+
+METHOD 1: AUTOMATIC LAUNCH (RECOMMENDED)
+----------------------------------------
+On Windows Laptop:
+  Double-click "START_WINDOWS.bat"
+
+On Mac / Linux Laptop:
+  Double-click or run "./START_MAC_LINUX.sh" in terminal.
+
+METHOD 2: MANUAL TERMINAL LAUNCH
+---------------------------------
+1. Open Command Prompt (Windows) or Terminal (Mac/Linux).
+2. Navigate to this extracted folder:
+   cd cycloneai-app
+3. Install dependencies:
+   npm install
+4. Run the development server:
+   npm run dev
+5. Open your web browser and visit:
+   http://localhost:3000
+
+KEY RESILIENT CAPABILITIES INCLUDED:
+- Real-time Cyclone Tracking & IMD Dvorak Intensity Prediction
+- Offline Zero-Net Shelter Check-In & Manifest Headcount Sync
+- Emergency Officer Dispatch Call Simulator (works on laptops without cell modem)
+- Multilingual Voice Broadcast Alerts (Odia, Bengali, Hindi, Telugu, Tamil, English)
+- Acoustic CAP Level 4 Sirens
+- Explainable AI (Grad-CAM++ & SHAP) Audits
+- Integrated Firebase Cloud Sync with Offline Fallback
+========================================================================

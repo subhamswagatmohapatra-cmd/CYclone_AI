@@ -1,0 +1,7 @@
+{
+  "name": "CycloneAI - Real-Time Disaster Monitoring System",
+  "description": "Advanced real-time meteorological and geospatial monitoring system with offline zero-network resilience, interactive cyclone shelter GIS map, emergency helpline directory, deep learning storm detection, ensemble trajectory forecasting, and Firebase cloud synchronization.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
